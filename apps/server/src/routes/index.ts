@@ -1,5 +1,6 @@
-import { AppError } from "../middleware/error-handler";
 import { Router } from "express";
+
+import { AppError } from "../middleware/error-handler";
 
 export const serverRoutes = () => {
   const router = Router();

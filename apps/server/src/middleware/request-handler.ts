@@ -1,7 +1,8 @@
 import { Request, Response, NextFunction } from "express";
+
 import { logger } from "../utils/logger";
 
-export const requestLogger = (
+export const requestHandler = (
   req: Request,
   res: Response,
   next: NextFunction

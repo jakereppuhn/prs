@@ -1,12 +1,12 @@
-import express from "express";
 import cors from "cors";
+import express from "express";
 import helmet from "helmet";
 
 import { env } from "./config/env";
-import { requestLogger } from "./middleware/request-logger";
-import { serverRoutes } from "./routes";
-import { logger } from "./utils/logger";
 import { errorHandler } from "./middleware/error-handler";
+import { logger } from "./utils/logger";
+import { requestHandler } from "./middleware/request-handler";
+import { serverRoutes } from "./routes";
 
 const PORT = env.PORT;
 const app = express();
@@ -14,7 +14,7 @@ const app = express();
 app.use(helmet());
 app.use(cors());
 
-app.use(requestLogger);
+app.use(requestHandler);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
