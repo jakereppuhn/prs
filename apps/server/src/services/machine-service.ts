@@ -1,9 +1,10 @@
+import { IQueryParams } from "@/types/schema";
 import { Services } from ".";
 
 export class MachineService {
   constructor(services: Services) {}
 
-  public async getMachines(machineParams: any) {}
+  public async getMachines(machineParams?: IQueryParams) {}
 
   public async getMachine(machineId: string) {}
 

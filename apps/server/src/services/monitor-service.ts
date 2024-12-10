@@ -1,9 +1,10 @@
+import { IQueryParams } from "@/types/schema";
 import { Services } from ".";
 
 export class MonitorService {
   constructor(services: Services) {}
 
-  public async getMonitors(monitorParams: any) {}
+  public async getMonitors(monitorParams?: IQueryParams) {}
 
   public async getMonitor(monitorId: string) {}
 

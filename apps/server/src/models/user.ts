@@ -1,5 +1,5 @@
+import { IUser } from "@/types/schema";
 import { DataTypes, Model, Sequelize, UUIDV4 } from "sequelize";
-import { IUser } from "@/utils/interfaces";
 
 class User extends Model implements IUser {
   public id!: string;

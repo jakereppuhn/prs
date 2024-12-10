@@ -1,6 +1,8 @@
 import cors from "cors";
 import express, { NextFunction, Request, Response } from "express";
 import helmet from "helmet";
+import http from "http";
+import { WebSocketServer } from "ws";
 
 import { __prod__, env } from "./config/env";
 import { errorHandler } from "./middleware/error-handler";
@@ -13,6 +15,8 @@ import { Services } from "./services";
 
 const PORT = env.PORT;
 const app = express();
+const server = http.createServer(app);
+const wsServer = new WebSocketServer({ server });
 
 const startServer = async () => {
   const sequelize = await initializeDatabase();
@@ -20,7 +24,7 @@ const startServer = async () => {
   await sequelize.sync({ alter: !__prod__ });
   const services = Services.getInstance();
 
-  await services.socket.initialize();
+  await services.socket.initialize(wsServer);
 
   app.use(helmet());
   app.use(cors());
@@ -40,7 +44,7 @@ const startServer = async () => {
   });
   app.use(errorHandler);
 
-  const server = app.listen(PORT, () => {
+  server.listen(PORT, () => {
     logger.info(`Server initialized on port ${PORT}`);
   });
 
