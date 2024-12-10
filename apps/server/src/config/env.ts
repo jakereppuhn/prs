@@ -10,4 +10,8 @@ const envSchema = z.object({
   LOG_LEVEL: z.enum(["error", "warn", "info", "debug"]).default("info"),
 });
 
-export const env = envSchema.parse(process.env);
+const env = envSchema.parse(process.env);
+
+const __prod__ = env.NODE_ENV === "production";
+
+export { env, __prod__ };

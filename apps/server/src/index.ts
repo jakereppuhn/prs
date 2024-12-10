@@ -1,5 +1,5 @@
 import cors from "cors";
-import express from "express";
+import express, { NextFunction, Request, Response } from "express";
 import helmet from "helmet";
 
 import { env } from "./config/env";
@@ -7,11 +7,16 @@ import { errorHandler } from "./middleware/error-handler";
 import { logger } from "./utils/logger";
 import { requestHandler } from "./middleware/request-handler";
 import { serverRoutes } from "./routes";
+import { initializeDatabase } from "./config/database";
+import { initializeModels } from "./models";
 
 const PORT = env.PORT;
 const app = express();
 
 const startServer = async () => {
+  const sequelize = await initializeDatabase();
+  await initializeModels(sequelize);
+
   app.use(helmet());
   app.use(cors());
 
@@ -20,7 +25,7 @@ const startServer = async () => {
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
 
-  app.use((err, req, res, next) => {
+  app.use((err: Error, req: Request, res: Response, next: NextFunction) => {
     console.error(err.stack);
     res.status(500).json({ error: "Something went wrong!" });
   });
@@ -36,8 +41,10 @@ const startServer = async () => {
     logger.info(`Server initialized on port ${PORT}`);
   });
 
-  process.on("SIGTERM", () => {
+  process.on("SIGTERM", async () => {
     logger.info("SIGTERM received. Shutting down gracefully...");
+    await sequelize.close();
+    logger.info("Database connection closed");
     server.close(() => {
       logger.info("Server closed");
       process.exit(0);
