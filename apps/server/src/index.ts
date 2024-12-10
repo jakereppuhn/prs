@@ -4,6 +4,8 @@ import helmet from "helmet";
 import http from "http";
 import { WebSocketServer } from "ws";
 
+// add emailList property to user
+
 import { __prod__, env } from "./config/env";
 import { errorHandler } from "./middleware/error-handler";
 import { logger } from "./utils/logger";
