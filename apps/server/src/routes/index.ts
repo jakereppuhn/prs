@@ -1,17 +1,23 @@
 import { Router } from "express";
 
-import { AppError } from "../middleware/error-handler";
+import { authRoutes } from "./auth-routes";
+import { machineRoutes } from "./machine-routes";
+import { monitorRoutes } from "./monitor-routes";
+import { scriptRoutes } from "./script-routes";
+import { userRoutes } from "./user-routes";
+import { utilityRoutes } from "./utility-routes";
 
 export const serverRoutes = () => {
   const router = Router();
 
-  router.get("/health", (req, res) => {
-    res.status(200).json({ status: "ok" });
-  });
+  router.use("/auth", authRoutes());
+  router.use("/machines", machineRoutes());
+  router.use("/monitors", monitorRoutes());
+  router.use("/users", userRoutes());
 
-  router.get("/error-test", (_req, _res) => {
-    throw new AppError(400, "This is a test error");
-  });
+  // Development routes
+  router.use("/scripts", scriptRoutes());
+  router.use("/utils", utilityRoutes());
 
   return router;
 };
