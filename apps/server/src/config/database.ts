@@ -1,19 +1,19 @@
 import { Sequelize } from "sequelize";
-import { env } from "./env";
+import { __prod__, env } from "./env";
 
 const environment = env.NODE_ENV;
 
 const getDatabaseConfig = () => {
   const baseConfig = {
     dialect: "sqlite" as const,
-    logging: environment === "development" ? console.log : false,
+    logging: false,
   };
 
   switch (environment) {
     case "development":
       return {
         ...baseConfig,
-        storage: "./data/dev-database.sqlite",
+        storage: "./data/development.sqlite",
       };
     case "production":
       return {
@@ -30,7 +30,7 @@ const getDatabaseConfig = () => {
 };
 
 const seedDevelopmentDatabase = async () => {
-  if (environment === "development") {
+  if (!__prod__) {
     console.log("Seeding development database...");
   }
 };
@@ -43,7 +43,7 @@ export const initializeDatabase = async () => {
     await sequelize.authenticate();
     console.log(`Database connection established (${environment} environment)`);
 
-    if (environment === "development") {
+    if (!__prod__) {
       await sequelize.sync({ alter: true });
       await seedDevelopmentDatabase();
     }

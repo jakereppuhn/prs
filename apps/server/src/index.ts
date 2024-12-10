@@ -2,13 +2,14 @@ import cors from "cors";
 import express, { NextFunction, Request, Response } from "express";
 import helmet from "helmet";
 
-import { env } from "./config/env";
+import { __prod__, env } from "./config/env";
 import { errorHandler } from "./middleware/error-handler";
 import { logger } from "./utils/logger";
 import { requestHandler } from "./middleware/request-handler";
 import { serverRoutes } from "./routes";
 import { initializeDatabase } from "./config/database";
 import { initializeModels } from "./models";
+import { Services } from "./services";
 
 const PORT = env.PORT;
 const app = express();
@@ -16,12 +17,14 @@ const app = express();
 const startServer = async () => {
   const sequelize = await initializeDatabase();
   await initializeModels(sequelize);
+  await sequelize.sync({ alter: !__prod__ });
+  const services = Services.getInstance();
+
+  await services.socket.initialize();
 
   app.use(helmet());
   app.use(cors());
-
   app.use(requestHandler);
-
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
 
